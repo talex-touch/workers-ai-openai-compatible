@@ -757,7 +757,7 @@ function renderAdminPage() {
       --border: 214.3 31.8% 91.4%;
       --input: 214.3 31.8% 91.4%;
       --ring: 222.2 84% 4.9%;
-      --radius: 0.75rem;
+      --radius: 0.5rem;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -789,9 +789,7 @@ function renderAdminPage() {
     body {
       margin: 0;
       min-height: 100vh;
-      background:
-        radial-gradient(circle at top left, hsl(var(--muted)) 0, transparent 32rem),
-        hsl(var(--background));
+      background: hsl(var(--background));
       color: hsl(var(--foreground));
       font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       line-height: 1.5;
@@ -799,7 +797,7 @@ function renderAdminPage() {
     a { color: inherit; text-decoration: none; }
     a:hover { text-decoration: underline; text-underline-offset: 4px; }
     button, input { font: inherit; }
-    main { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 32px 0 56px; }
+    main { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 48px; }
     code {
       border-radius: 0.45rem;
       background: hsl(var(--muted));
@@ -818,15 +816,13 @@ function renderAdminPage() {
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 1rem;
       align-items: start;
-      padding: 1.35rem;
+      padding: 1.15rem;
       border: 1px solid hsl(var(--border));
-      border-radius: calc(var(--radius) + 0.35rem);
-      background: hsl(var(--card) / 0.82);
-      box-shadow: 0 18px 60px hsl(222.2 84% 4.9% / 0.08);
-      backdrop-filter: blur(16px);
+      border-radius: var(--radius);
+      background: hsl(var(--card));
     }
     .eyebrow { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.85rem; }
-    .hero h1 { margin: 0; max-width: 760px; font-size: clamp(2rem, 5vw, 4rem); line-height: 0.98; letter-spacing: -0.06em; }
+    .hero h1 { margin: 0; max-width: 760px; font-size: clamp(1.85rem, 4.2vw, 3.25rem); line-height: 1.02; letter-spacing: -0.045em; }
     .hero p { max-width: 720px; margin: 1rem 0 0; color: hsl(var(--muted-foreground)); font-size: 1rem; }
     .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end; }
     .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; }
@@ -835,7 +831,7 @@ function renderAdminPage() {
       border-radius: var(--radius);
       background: hsl(var(--card));
       color: hsl(var(--card-foreground));
-      box-shadow: 0 1px 2px hsl(222.2 84% 4.9% / 0.05);
+      box-shadow: none;
     }
     .card-header { display: grid; gap: 0.25rem; padding: 1.15rem 1.15rem 0; }
     .card-title { margin: 0; font-size: 1rem; font-weight: 650; letter-spacing: -0.02em; }
@@ -860,9 +856,9 @@ function renderAdminPage() {
       cursor: pointer;
       font-weight: 600;
       font-size: 0.9rem;
-      transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
     }
-    .button:hover { transform: translateY(-1px); }
+    .button:hover { background-color: hsl(var(--primary) / 0.9); }
     .button:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
     .button.secondary { background: hsl(var(--secondary)); color: hsl(var(--secondary-foreground)); border-color: hsl(var(--border)); }
     .button.ghost { background: transparent; color: hsl(var(--foreground)); border-color: hsl(var(--border)); }
@@ -926,7 +922,7 @@ function renderAdminPage() {
       background: hsl(var(--popover));
       color: hsl(var(--popover-foreground));
       padding: 0.8rem 0.95rem;
-      box-shadow: 0 18px 60px hsl(222.2 84% 4.9% / 0.18);
+      box-shadow: 0 6px 20px hsl(222.2 84% 4.9% / 0.08);
     }
     .empty { color: hsl(var(--muted-foreground)); text-align: center; padding: 1.3rem !important; }
 
@@ -1022,7 +1018,7 @@ function renderAdminPage() {
         <div class="card span-6">
           <div class="card-header">
             <h2 class="card-title">默认配置</h2>
-            <p class="card-description">通过 <code>wrangler.toml</code> 的 vars 调整默认模型和允许模型。</p>
+            <p class="card-description">默认值内置在代码里，可用 Cloudflare Variables 覆盖。</p>
           </div>
           <div class="card-content stack">
             <div><span class="muted">Chat</span><br /><code id="defaultChat"></code></div>
