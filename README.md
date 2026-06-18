@@ -28,7 +28,7 @@ npx wrangler login
 npm run kv:create
 ```
 
-把命令输出里的 `id` 填到 `wrangler.toml`：
+把命令输出里的 `id` 填到 `wrangler.toml`。仓库里的默认 id 用于当前示例 Worker，不是 secret；fork 后建议替换成自己的 KV namespace id：
 
 ```toml
 [[kv_namespaces]]
@@ -38,11 +38,19 @@ id = "你的 KV namespace id"
 
 ### 3. 设置后台登录令牌
 
+推荐在 Cloudflare Dashboard 的 Worker 设置里添加 Secret：
+
+- 名称：`ADMIN_TOKEN`
+- 类型：Secret
+- 值：一个足够长的随机字符串
+
+也可以用 Wrangler 设置：
+
 ```bash
 npm run secret:admin
 ```
 
-输入一个足够长的随机字符串，部署后用它登录首页后台。
+Secret 只保存在 Cloudflare 端，不要写进仓库。部署后用它登录首页后台。
 
 ### 4. 部署
 
@@ -66,21 +74,24 @@ cp .dev.vars.example .dev.vars
 npm run dev
 ```
 
-本地后台也使用 `.dev.vars` 里的 `ADMIN_TOKEN` 登录。
+本地后台使用 `.dev.vars` 里的 `ADMIN_TOKEN` 登录。`.dev.vars` 已被 `.gitignore` 忽略，不会提交，也不会被 GitHub 自动部署读取。
 
-## 配置项
+## 环境变量与 Secret
 
-主要配置在 `wrangler.toml`：
+仓库里的 `wrangler.toml` 不带 `[vars]`，避免 GitHub 连接 Cloudflare 后每次推送把项目内环境变量同步到 Worker。默认模型写在代码里，fork 后无需配置即可运行。
 
-| 变量 | 说明 |
-| --- | --- |
-| `DEFAULT_MODEL` | Chat 默认模型 |
-| `DEFAULT_EMBEDDING_MODEL` | Embedding 默认模型 |
-| `RECOMMENDED_VISION_MODEL` | 后台展示的推荐多模态模型 |
-| `ALLOWED_MODELS` | 允许调用的模型，多个模型用英文逗号分隔 |
-| `API_KEY` | 兼容旧配置；为空时使用后台生成的 Key |
+生产环境建议只在 Cloudflare Dashboard 维护：
 
-生产环境建议只使用后台生成的 API Key，不要把固定 `API_KEY` 写进仓库。
+| 名称 | 类型 | 说明 |
+| --- | --- | --- |
+| `ADMIN_TOKEN` | Secret | 后台登录令牌，必填 |
+| `API_KEY` | Secret 或 Variable | 兼容旧配置；一般不需要，建议用后台生成的 Key |
+| `DEFAULT_MODEL` | Variable | 可选，覆盖 Chat 默认模型 |
+| `DEFAULT_EMBEDDING_MODEL` | Variable | 可选，覆盖 Embedding 默认模型 |
+| `RECOMMENDED_VISION_MODEL` | Variable | 可选，覆盖后台展示的推荐多模态模型 |
+| `ALLOWED_MODELS` | Variable | 可选，限制允许调用的模型，多个模型用英文逗号分隔 |
+
+`.dev.vars.example` 只用于本地开发模板，不包含真实 secret。
 
 ## 默认模型
 
@@ -130,6 +141,10 @@ curl https://your-worker.your-subdomain.workers.dev/v1/embeddings \
 
 ## 常见问题
 
+### GitHub 推送部署会覆盖 Secret 吗？
+
+不会。Cloudflare Worker Secret 独立保存在 Cloudflare 端，仓库和 GitHub 推送不会读取或覆盖 Secret。当前仓库也不再声明 `[vars]`，所以不会把项目内普通环境变量带到线上。
+
 ### Fork 后部署失败：找不到 KV namespace
 
 先运行：
@@ -138,7 +153,7 @@ curl https://your-worker.your-subdomain.workers.dev/v1/embeddings \
 npm run kv:create
 ```
 
-然后把输出的 `id` 更新到 `wrangler.toml` 的 `kv_namespaces.id`。
+然后把输出的 `id` 更新到 `wrangler.toml` 的 `kv_namespaces.id`。KV id 不是 secret，但 fork 后应替换为自己的 namespace。
 
 ### API 公开访问了吗？
 

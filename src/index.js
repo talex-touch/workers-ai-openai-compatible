@@ -3,6 +3,9 @@ const EMBEDDING_PATHS = new Set(['/v1/embeddings', '/embeddings']);
 const HISTORY_LIMIT = 100;
 const FREE_NEURONS_PER_DAY = 10000;
 const USD_PER_1000_NEURONS = 0.011;
+const DEFAULT_CHAT_MODEL = '@cf/meta/llama-3.2-1b-instruct';
+const DEFAULT_EMBEDDING_MODEL = '@cf/qwen/qwen3-embedding-0.6b';
+const DEFAULT_VISION_MODEL = '@cf/meta/llama-3.2-11b-vision-instruct';
 
 const MODEL_CATALOG = [
   {
@@ -145,7 +148,7 @@ export default {
 async function chatCompletions(request, env, keyName) {
   const started = Date.now();
   const body = await request.json();
-  const model = body.model || env.DEFAULT_MODEL;
+  const model = body.model || getDefaultChatModel(env);
 
   assertModelAllowed(model, env, 'chat');
 
@@ -195,7 +198,7 @@ async function chatCompletions(request, env, keyName) {
 async function embeddings(request, env, keyName) {
   const started = Date.now();
   const body = await request.json();
-  const model = body.model || env.DEFAULT_EMBEDDING_MODEL;
+  const model = body.model || getDefaultEmbeddingModel(env);
 
   assertModelAllowed(model, env, 'embedding');
 
@@ -424,9 +427,9 @@ async function getAdminState(env) {
   return {
     models: MODEL_CATALOG.filter((model) => getAllowedModels(env).includes(model.id)),
     defaults: {
-      chat: env.DEFAULT_MODEL,
-      embedding: env.DEFAULT_EMBEDDING_MODEL,
-      vision: env.RECOMMENDED_VISION_MODEL,
+      chat: getDefaultChatModel(env),
+      embedding: getDefaultEmbeddingModel(env),
+      vision: getDefaultVisionModel(env),
     },
     pricing: {
       freeNeuronsPerDay: FREE_NEURONS_PER_DAY,
@@ -488,10 +491,24 @@ function listModels(env) {
 }
 
 function getAllowedModels(env) {
-  return String(env.ALLOWED_MODELS || env.DEFAULT_MODEL || '')
+  const configured = String(env.ALLOWED_MODELS || '')
     .split(',')
     .map((model) => model.trim())
     .filter(Boolean);
+  if (configured.length) return configured;
+  return MODEL_CATALOG.map((model) => model.id);
+}
+
+function getDefaultChatModel(env) {
+  return env.DEFAULT_MODEL || DEFAULT_CHAT_MODEL;
+}
+
+function getDefaultEmbeddingModel(env) {
+  return env.DEFAULT_EMBEDDING_MODEL || DEFAULT_EMBEDDING_MODEL;
+}
+
+function getDefaultVisionModel(env) {
+  return env.RECOMMENDED_VISION_MODEL || DEFAULT_VISION_MODEL;
 }
 
 function assertModelAllowed(model, env, endpointType) {
