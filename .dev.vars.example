@@ -1,0 +1,9 @@
+# 本地开发可复制为 .dev.vars
+# cp .dev.vars.example .dev.vars
+
+# 后台登录令牌；本地 dev 必填，生产环境请用 `npm run secret:admin` 设置 Wrangler Secret。
+ADMIN_TOKEN=change-me-local-admin-token
+
+# 兼容旧配置；为空时使用后台生成的 key。
+# 如果设置，客户端必须传 Authorization: Bearer <API_KEY>。
+API_KEY=

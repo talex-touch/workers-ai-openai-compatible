@@ -1,0 +1,16 @@
+{
+  "name": "workers-ai-openai-compatible",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "check": "node --check src/index.js",
+    "kv:create": "wrangler kv namespace create GATEWAY_KV",
+    "secret:admin": "wrangler secret put ADMIN_TOKEN",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

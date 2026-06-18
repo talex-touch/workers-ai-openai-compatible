@@ -1,0 +1,20 @@
+name = "workers-ai-openai-compatible"
+main = "src/index.js"
+compatibility_date = "2026-06-17"
+
+[ai]
+binding = "AI"
+
+[[kv_namespaces]]
+binding = "GATEWAY_KV"
+# Fork 后运行 `npm run kv:create`，把输出的 id 填到这里。
+id = "replace-with-your-kv-namespace-id"
+
+[vars]
+DEFAULT_MODEL = "@cf/meta/llama-3.2-1b-instruct"
+DEFAULT_EMBEDDING_MODEL = "@cf/qwen/qwen3-embedding-0.6b"
+RECOMMENDED_VISION_MODEL = "@cf/meta/llama-3.2-11b-vision-instruct"
+# 多个模型用英文逗号分隔
+ALLOWED_MODELS = "@cf/meta/llama-3.2-1b-instruct,@cf/qwen/qwen3-embedding-0.6b,@cf/meta/llama-3.2-11b-vision-instruct,@cf/meta/llama-4-scout-17b-16e-instruct,@cf/llava-hf/llava-1.5-7b-hf,@cf/meta/llama-3.3-70b-instruct-fp8-fast,@cf/openai/gpt-oss-20b,@cf/deepseek-ai/deepseek-r1-distill-qwen-32b,@cf/qwen/qwen2.5-coder-32b-instruct"
+# 兼容旧配置；为空时使用 KV 中生成的 key
+API_KEY = ""
